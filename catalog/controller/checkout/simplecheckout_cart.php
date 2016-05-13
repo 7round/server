@@ -185,15 +185,14 @@ class ControllerCheckoutSimpleCheckoutCart extends Controller {
             } else {
                 $image = '';
             }
-            
             if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
-                $price = $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')));
+                $price = $this->currency->convert($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')),"EUR","RUB"). " руб.";
             } else {
                 $price = false;
             }
 
             if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
-                $total = $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']);
+                $total = $this->currency->convert($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')),"EUR","RUB") * $product['quantity'] . " руб.";
             } else {
                 $total = false;
             }
@@ -211,11 +210,11 @@ class ControllerCheckoutSimpleCheckoutCart extends Controller {
                     );
 
                     if ($product['recurring_trial']) {
-                        $recurring_price = $this->currency->format($this->tax->calculate($product['recurring_trial_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
+                        $recurring_price = $this->currency->convert($this->tax->calculate($product['recurring_trial_price'], $product['tax_class_id'], $this->config->get('config_tax')),"EUR","RUB") * $product['quantity'] . " руб.";
                         $profile_description = sprintf($this->language->get('text_trial_description'), $recurring_price, $product['recurring_trial_cycle'], $frequencies[$product['recurring_trial_frequency']], $product['recurring_trial_duration']) . ' ';
                     }
 
-                    $recurring_price = $this->currency->format($this->tax->calculate($product['recurring_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
+                    //$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
 
                     if ($product['recurring_duration']) {
                         $profile_description .= sprintf($this->language->get('text_payment_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);

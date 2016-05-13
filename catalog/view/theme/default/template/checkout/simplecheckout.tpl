@@ -1,5 +1,5 @@
 <?php if (!$ajax) { ?>
-<?php 
+<?php
 $simple_page = 'simplecheckout';
 $heading_title .= $simple_show_weight ? '&nbsp;(<span id="weight">'. $weight . '</span>)' : '';
 include $simple->tpl_header();
@@ -9,7 +9,7 @@ include $simple->tpl_static();
 <?php } ?>
     <div class="simplecheckout" id="simplecheckout_form">
     <!-- simplecheckout form -->
-        <?php 
+        <?php
             $replace = array(
                 '{three_column}'  => '<div class="simplecheckout-three-column">',
                 '{/three_column}' => '</div>',
@@ -25,28 +25,28 @@ include $simple->tpl_static();
                 '{help}'          => $simple_common_view_help_text ? '<div class="simplecheckout-block" id="simplecheckout_help"></div>' : '',
                 '{payment_form}'  => '',
 			);
-            
-            if ($simple_common_view_agreement_text && isset($information_title) && isset($information_text)) { 
+
+            if ($simple_common_view_agreement_text && isset($information_title) && isset($information_text)) {
                 $replace['{agreement}'] = '<div class="simplecheckout-block" id="simplecheckout_agreement">';
                 $replace['{agreement}'] .= '<div class="simplecheckout-block-heading">' . $information_title . '</div>';
                 $replace['{agreement}'] .= '<div class="simplecheckout-block-content simplecheckout-scroll">' . $information_text . '</div>';
                 $replace['{agreement}'] .= '</div>';
             }
-            
-            if ($simple_common_view_help_text && isset($help_title) && isset($help_text)) { 
+
+            if ($simple_common_view_help_text && isset($help_title) && isset($help_text)) {
                 $replace['{help}'] = '<div class="simplecheckout-block" id="simplecheckout_help">';
                 $replace['{help}'] .= '<div class="simplecheckout-block-heading">' . $help_title . '</div>';
                 $replace['{help}'] .= '<div class="simplecheckout-block-content simplecheckout-scroll">' . $help_text . '</div>';
                 $replace['{help}'] .= '</div>';
             }
-            
+
             if ($payment_form) {
                 $replace['{payment_form}'] = '<div class="simplecheckout-block" id="simplecheckout_payment_form">';
                 $replace['{payment_form}'] .= '<div class="simplecheckout-block-heading">' . $text_payment_form_title . '</div>';
                 $replace['{payment_form}'] .= '<div class="simplecheckout-block-content">' . $payment_form . '</div>';
                 $replace['{payment_form}'] .= '</div>';
             }
-            
+
             $find = array(
 	  			'{three_column}',
 	  			'{/three_column}',
@@ -61,7 +61,7 @@ include $simple->tpl_static();
                 '{agreement}',
                 '{help}',
                 '{payment_form}'
-			);	
+			);
 
             if (!empty($modules)) {
                 foreach ($modules as $key => $value) {
@@ -84,16 +84,16 @@ include $simple->tpl_static();
     <span style="display:none" id="text_cart"><?php echo $text_cart; ?></span>
     <span style="display:none" id="button_next"><?php echo $button_next; ?></span>
     <span style="display:none" id="please_confirm"><?php echo $text_please_confirm; ?></span>
-    
+
     <div style="width:100%;height:1px;clear:both;"></div>
-    
+
     <div class="simplecheckout-proceed-payment" id="simplecheckout_proceed_payment" style="display:none;"><?php echo $text_proceed_payment ?></div>
     <!-- order button block -->
     <?php if ($error_warning_agree && $simple_show_errors) { ?>
         <div class="simplecheckout-warning-block agree-warning"><?php echo $error_warning_agree ?></div>
     <?php } elseif ($agree_warning) { ?>
         <div class="simplecheckout-warning-block agree-warning" style="display:none"><?php echo $agree_warning ?></div>
-    <?php } ?> 
+    <?php } ?>
     <?php if ($simple_steps) { ?>
     <div class="simplecheckout-button-block buttons" id="step_buttons">
         <div class="simplecheckout-button-right">

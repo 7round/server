@@ -1,0 +1,145 @@
+#contactable {
+    display: none;
+    width:430px;
+    /*height:316px;*/
+    background:#FFF;
+    position:fixed;
+    left:50%;
+    top:20%;
+    margin-left:-241px;
+    border-radius:5px;
+    box-shadow:1px 2px 5px #757575;
+    padding: 0 30px 20px 30px;
+    z-index:100000;
+}
+#contactable h3 {
+    font-size: 22px;
+    margin: 0;
+    padding-bottom: 10px;
+    padding-top: 12px;
+    text-align: center;
+	font-weight:normal;
+}
+#close{
+    display:block;
+    width:26px;
+    height:27px;
+    background-image:url(../image/popup_close.png);
+    position:absolute;
+    top:8px;
+    right:10px;
+    z-index: 1;
+    cursor:pointer;
+}
+#contactForm{
+    width:410px;
+    margin:0 auto;
+}
+#contactForm p {
+    font-size:16px;
+    color:#474747;
+    margin-bottom: 0px;
+    line-height: 24px;
+}
+#contactForm .red_text {
+    color:red;
+}
+#contactForm input{
+    width:410px;
+    height:31px;
+    background-color:#eaeaea;
+    padding:0 10px;
+    border:0;
+    border-radius:4px;
+    color:#474747;
+}
+#contactable_button {
+    height:30px;
+    margin-top:17px;
+}
+#contactable_button #button1 {
+    width:111px;
+    height:30px;
+    background-color: #2e3a47;
+    border: 1px solid #28313c;
+    color: #FFFFFF;
+    float:left;
+    border:0;
+    font-size:14px;
+    font-family:Calibri, Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    text-transform: none;
+}
+/*
+#contactable_button #button1:hover {
+	text-decoration:underline;
+}
+*/
+#contactable_button #button2 {
+    width:111px;
+    height:30px;
+    /*background-image: url(../image/button/cancelling.png);*/
+    float: right;
+    border:0;
+    font-size:14px;
+    font-family:Calibri, Arial, Helvetica, sans-serif;
+    color:#474747;
+    cursor: pointer;
+}
+#contactable_button #button2:hover {
+	text-decoration:underline;
+}
+
+
+#contactable #contactForm .red {
+    color:	#F5410F;
+}
+
+#contactable #overlay {
+    background-color:#666666;
+    display:none;
+    height:100%;
+    left:0;
+    margin:0;
+    padding:0;
+    position:absolute;
+    top:0;
+    width:100%;
+    z-index:0;
+}
+#contactable .error { background-color: #EDBE9C; }
+
+#contactable #name.error { background-color: #EDBE9C; }
+#contactable #email.error { background-color: #EDBE9C; }
+#contactable #comment.error { background-color: #EDBE9C; }
+
+#contactable form#contactForm #loading {
+    background: url(images/ajax-loader.gif) no-repeat;
+    width:55px;
+    height:55px;
+    margin: 100px auto;
+    display:none;
+}
+
+#contactable #callback {
+    font-size: 22px;
+    text-align:center;
+    padding-top:0px;
+    padding-bottom:20px;
+    color: #E21B1B;
+    display:none;
+    margin: 0;
+	font-weight:normal;
+}
+
+#contactable .holder {
+    margin:0 auto;
+}
+
+#call-link {
+    cursor:pointer;
+}
+
+#contactForm label.error {
+    background-color: #FFF;
+}

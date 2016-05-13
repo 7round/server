@@ -1,0 +1,62 @@
+<modification>
+	<id>Grid View for products Lists</id>
+	<version>1.0</version>
+	<vqmver>1.2.3</vqmver>
+	<author>uksb</author>
+	<file name="catalog/view/theme/default/template/product/category.tpl">
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'list');]]></search>
+			<add><![CDATA[$.cookie('display', 'list', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'grid');]]></search>
+			<add><![CDATA[$.cookie('display', 'grid', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[display('list');]]></search>
+			<add><![CDATA[display('grid');]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/default/template/product/manufacturer_info.tpl">
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'list');]]></search>
+			<add><![CDATA[$.cookie('display', 'list', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'grid');]]></search>
+			<add><![CDATA[$.cookie('display', 'grid', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[display('list');]]></search>
+			<add><![CDATA[display('grid');]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/default/template/product/search.tpl">
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'list');]]></search>
+			<add><![CDATA[$.cookie('display', 'list', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'grid');]]></search>
+			<add><![CDATA[$.cookie('display', 'grid', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[display('list');]]></search>
+			<add><![CDATA[display('grid');]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/default/template/product/special.tpl">
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'list');]]></search>
+			<add><![CDATA[$.cookie('display', 'list', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$.cookie('display', 'grid');]]></search>
+			<add><![CDATA[$.cookie('display', 'grid', { path: '/' });]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[display('list');]]></search>
+			<add><![CDATA[display('grid');]]></add>
+		</operation>
+	</file>
+</modification>

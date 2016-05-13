@@ -1,0 +1,559 @@
+<modification>
+    <id>VQMOD FOR E-SMSGATEWAY</id>
+    <version>OPENCART 1.5.4.x - 1.5.5.x</version>
+    <vqmver>1.0.0</vqmver>
+    <author>mfaridmailbox</author>
+    <file name="system/library/image.php">
+        <operation error="skip">
+            <search position="replace"><![CDATA[private $image;]]>
+            </search>
+            <add><![CDATA[                //farid
+                public $image;
+                //end
+
+]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="admin/controller/extension/module.php">
+        <operation error="skip">
+            <search position="after" offset="8"><![CDATA[public function uninstall() {]]>
+            </search>
+            <add><![CDATA[                        //farid-------
+                        if ($this->request->get['extension'] == 'labelimage') {
+                            if (isset($this->request->get['store_id'])) {
+                                $store_id = $this->request->get['store_id'];
+                            } else {
+                                $store_id = 0;
+                            }
+                            $this->load->model('setting/labelimage');
+                            if (!$this->model_setting_labelimage->uninstall()){
+                                $this->session->data['error'] = 'Error Uninstall Module';
+                                $this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
+                            }
+                         }
+                        //end-------			
+]]>
+            </add>
+        </operation>
+        <operation error="skip">
+            <search position="after" offset="8"><![CDATA[public function install() {]]>
+            </search>
+            <add><![CDATA[                        //farid-------
+                        if ($this->request->get['extension'] == 'labelimage') {
+                            if (isset($this->request->get['store_id'])) {
+                                $store_id = $this->request->get['store_id'];
+                            } else {
+                                $store_id = 0;
+                            }
+                            $this->load->model('setting/labelimage');
+                            if (!$this->model_setting_labelimage->install()){
+                                $this->session->data['error'] = 'Error Install Module';
+                                $this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
+                            }
+                        }
+                        //end-------			
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="admin/language/*/catalog/product.php">
+        <operation error="skip">
+            <search position="before"><![CDATA[?>]]>
+            </search>
+            <add><![CDATA[//farid
+//label image
+$_['entry_topleft']           = 'Top Left Product Label (PNG):';
+$_['entry_topright']          = 'Top Right Product Label (PNG):';
+$_['entry_bottomleft']        = 'Bottom Left Product Label (PNG):';
+$_['entry_bottomright']       = 'Bottom Right Product Label (PNG):';
+//end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="admin/controller/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$this->data['entry_layout'] = $this->language->get('entry_layout');]]>
+            </search>
+            <add><![CDATA[        //farid
+        $this->data['entry_topleft'] = $this->language->get('entry_topleft');
+        $this->data['entry_topright'] = $this->language->get('entry_topright');
+        $this->data['entry_bottomleft'] = $this->language->get('entry_bottomleft');
+        $this->data['entry_bottomright'] = $this->language->get('entry_bottomright');
+        
+        //end
+]]>
+            </add>
+        </operation>
+ 
+        <operation error="skip">
+            <search position="after" offset="2"><![CDATA[$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);]]>
+            </search>
+            <add><![CDATA[        //farid
+       if (isset($this->request->get['store_id'])) {
+            $store_id = $this->request->get['store_id'];
+        } else {
+            $store_id = 0;
+        }
+        $this->load->model('setting/setting');
+
+        $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+        //pr($settings);
+        if (empty($settings))
+            $this->data['labelimage'] = false;
+        else
+            $this->data['labelimage'] = true;
+        if ($this->data['labelimage']){
+            if (isset($this->request->post['topleft_png'])) {
+                $this->data['topleft_png'] =  $this->request->post['topleft_png'];
+            } elseif (!empty($product_info)) {
+                $this->data['topleft_png'] = $product_info['topleft_png'];
+            } else {
+                $this->data['topleft_png'] = '';
+            }
+
+            $this->load->model('tool/image');
+
+            if (isset($this->request->post['topleft_png']) && file_exists(DIR_IMAGE . $this->request->post['topleft_png'])) {
+                $this->data['topleft_png_thumb'] = $this->model_tool_image->resize($this->request->post['topleft_png'], 100, 100);
+            } elseif (!empty($product_info) && $product_info['topleft_png'] && file_exists(DIR_IMAGE . $product_info['topleft_png'])) {
+                $this->data['topleft_png_thumb'] = $this->model_tool_image->resize($product_info['topleft_png'], 100, 100);
+            } else {
+                $this->data['topleft_png_thumb'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+            }
+
+            if (isset($this->request->post['topright_png'])) {
+                $this->data['topright_png'] =  $this->request->post['topright_png'];
+            } elseif (!empty($product_info)) {
+                $this->data['topright_png'] = $product_info['topright_png'];
+            } else {
+                $this->data['topright_png'] = '';
+            }
+
+            $this->load->model('tool/image');
+
+            if (isset($this->request->post['topright_png']) && file_exists(DIR_IMAGE . $this->request->post['topright_png'])) {
+                $this->data['topright_png_thumb'] = $this->model_tool_image->resize($this->request->post['topright_png'], 100, 100);
+            } elseif (!empty($product_info) && $product_info['topright_png'] && file_exists(DIR_IMAGE . $product_info['topright_png'])) {
+                $this->data['topright_png_thumb'] = $this->model_tool_image->resize($product_info['topright_png'], 100, 100);
+            } else {
+                $this->data['topright_png_thumb'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+            }
+
+            if (isset($this->request->post['bottomleft_png'])) {
+                $this->data['bottomleft_png'] =  $this->request->post['bottomleft_png'];
+            } elseif (!empty($product_info)) {
+                $this->data['bottomleft_png'] = $product_info['bottomleft_png'];
+            } else {
+                $this->data['bottomleft_png'] = '';
+            }
+
+            $this->load->model('tool/image');
+
+            if (isset($this->request->post['bottomleft_png']) && file_exists(DIR_IMAGE . $this->request->post['bottomleft_png'])) {
+                $this->data['bottomleft_png_thumb'] = $this->model_tool_image->resize($this->request->post['bottomleft_png'], 100, 100);
+            } elseif (!empty($product_info) && $product_info['bottomleft_png'] && file_exists(DIR_IMAGE . $product_info['bottomleft_png'])) {
+                $this->data['bottomleft_png_thumb'] = $this->model_tool_image->resize($product_info['bottomleft_png'], 100, 100);
+            } else {
+                $this->data['bottomleft_png_thumb'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+            }
+
+            if (isset($this->request->post['bottomright_png'])) {
+                $this->data['bottomright_png'] =  $this->request->post['bottomright_png'];
+            } elseif (!empty($product_info)) {
+                $this->data['bottomright_png'] = $product_info['bottomright_png'];
+            } else {
+                $this->data['bottomright_png'] = '';
+            }
+
+            $this->load->model('tool/image');
+
+            if (isset($this->request->post['bottomright_png']) && file_exists(DIR_IMAGE . $this->request->post['bottomright_png'])) {
+                $this->data['bottomright_png_thumb'] = $this->model_tool_image->resize($this->request->post['bottomright_png'], 100, 100);
+            } elseif (!empty($product_info) && $product_info['bottomright_png'] && file_exists(DIR_IMAGE . $product_info['bottomright_png'])) {
+                $this->data['bottomright_png_thumb'] = $this->model_tool_image->resize($product_info['bottomright_png'], 100, 100);
+            } else {
+                $this->data['bottomright_png_thumb'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
+            }
+        }
+        
+        //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+
+
+    <file name="admin/model/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[if (isset($data['image'])) {]]>
+            </search>
+            <add><![CDATA[                //farid
+		if (isset($data['topleft_png'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET topleft_png = '" . $this->db->escape(html_entity_decode($data['topleft_png'], ENT_QUOTES, 'UTF-8')) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}
+		if (isset($data['topright_png'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET topright_png = '" . $this->db->escape(html_entity_decode($data['topright_png'], ENT_QUOTES, 'UTF-8')) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}
+
+		if (isset($data['bottomleft_png'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET bottomleft_png = '" . $this->db->escape(html_entity_decode($data['bottomleft_png'], ENT_QUOTES, 'UTF-8')) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}
+		if (isset($data['bottomright_png'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET bottomright_png = '" . $this->db->escape(html_entity_decode($data['bottomright_png'], ENT_QUOTES, 'UTF-8')) . "' WHERE product_id = '" . (int)$product_id . "'");
+		}
+                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="admin/view/template/catalog/product_form.tpl">
+        <operation error="skip">
+            <search position="before"><![CDATA[<div id="tab-reward">]]>
+            </search>
+            <add><![CDATA[          <!--farid-->
+        <?php if ($labelimage) {?>
+          <div id="tab-label">
+            <table class="form">
+             <tr>
+                  <td><?php echo $entry_topleft; ?></td>
+                  <td><div class="image"><img src="<?php echo $topleft_png_thumb; ?>" alt="" id="topleft-png-thumb" /><br />
+                  <input type="hidden" name="topleft_png" value="<?php echo $topleft_png; ?>" id="topleft-png" />
+                  <a onclick="image_upload('topleft-png', 'topleft-png-thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#topleft-png-thumb').attr('src', '<?php echo $no_image; ?>'); $('#topleft-png').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            </tr>
+             <tr>
+                  <td><?php echo $entry_topright; ?></td>
+                  <td><div class="image"><img src="<?php echo $topright_png_thumb; ?>" alt="" id="topright-png-thumb" /><br />
+                  <input type="hidden" name="topright_png" value="<?php echo $topright_png; ?>" id="topright-png" />
+                  <a onclick="image_upload('topright-png', 'topright-png-thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#topright-png-thumb').attr('src', '<?php echo $no_image; ?>'); $('#topright-png').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            </tr>
+             <tr>
+                  <td><?php echo $entry_bottomleft; ?></td>
+                  <td><div class="image"><img src="<?php echo $bottomleft_png_thumb; ?>" alt="" id="bottomleft-png-thumb" /><br />
+                  <input type="hidden" name="bottomleft_png" value="<?php echo $bottomleft_png; ?>" id="bottomleft-png" />
+                  <a onclick="image_upload('bottomleft-png', 'bottomleft-png-thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#bottomleft-png-thumb').attr('src', '<?php echo $no_image; ?>'); $('#bottomleft-png').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            </tr>
+             <tr>
+                  <td><?php echo $entry_bottomright; ?></td>
+                  <td><div class="image"><img src="<?php echo $bottomright_png_thumb; ?>" alt="" id="bottomright-png-thumb" /><br />
+                  <input type="hidden" name="bottomright_png" value="<?php echo $bottomright_png; ?>" id="bottomright-png" />
+                  <a onclick="image_upload('bottomright-png', 'bottomright-png-thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#bottomright-png-thumb').attr('src', '<?php echo $no_image; ?>'); $('#bottomright-png').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+            </tr>
+
+            </table>
+        </div>
+          <?php } ?>
+          <!--end-->
+]]>
+            </add>
+        </operation>
+        <operation error="skip">
+            <search position="replace">
+				<![CDATA[<a href="#tab-image"><?php echo $tab_image; ?></a>]]>
+            </search>
+            <add trim="true">
+				<![CDATA[<a href="#tab-image"><?php echo $tab_image; ?></a><!--farid--> <?php echo $labelimage ? '<a href="#tab-label">Product Sticker</a>':null; ?><!--end farid-->]]>
+            </add>
+        </operation>
+    
+    </file>
+    <file name="catalog/model/catalog/product.php">
+        <operation error="skip">
+            <search position="after"><![CDATA['viewed'           => $query->row['viewed']
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                ,'topleft_png'           => isset($query->row['topleft_png'])?$query->row['topleft_png']:null,
+				'topright_png'       => isset($query->row['topright_png'])?$query->row['topright_png']:null,
+				'bottomleft_png'    => isset($query->row['bottomleft_png'])?$query->row['bottomleft_png']:null,
+				'bottomright_png'           => isset($query->row['bottomright_png'])?$query->row['bottomright_png']:null
+                                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="catalog/controller/product/product.php">
+        <operation error="skip">         
+            <search position="after"><![CDATA[$this->data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+            ]]>
+            </search>
+            <add><![CDATA[  //farid
+                if (isset($this->request->get['store_id'])) {
+                    $store_id = $this->request->get['store_id'];
+                } else {
+                    $store_id = 0;
+                }
+                $this->load->model('setting/setting');
+                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                    $label = new Labelimage();
+                }
+ 
+                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                    $this->data['thumb'] = $label->setLabelImage($this->data['thumb'], $product_info['topleft_png'], $product_info['topright_png'], 
+                        $product_info['bottomleft_png'], $product_info['bottomright_png'], $product_info['image'],$product_id, 
+                        $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'), 
+                        $settings['labelimage_productpros'],$settings['labelimage_product']);
+                } 
+                //----------
+            ]]>    
+            </add>
+
+        </operation>
+        <operation error="skip">         
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $this->config->get('config_image_related_width'), $this->config->get('config_image_related_height'));
+            ]]>
+            </search>
+            <add><![CDATA[                                 //farid
+						if (isset($this->request->get['store_id'])) {
+							$store_id = $this->request->get['store_id'];
+						} else {
+							$store_id = 0;
+						}
+						$this->load->model('setting/setting');
+						$settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+						if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+							require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+							$label = new Labelimage();
+						}
+                        if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], 
+                                    $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], 
+                                    $this->config->get('config_image_related_width'), $this->config->get('config_image_related_height'),
+                                    $settings['labelimage_productpros'],$settings['labelimage_product']);
+                         }
+                //----------
+            ]]>    
+            </add>
+
+        </operation>
+    </file>
+
+    <file name="catalog/controller/module/featured.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($product_info['image'], $setting['image_width'], $setting['image_height']);
+            ]]>
+            </search>
+            <add><![CDATA[      //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $product_info['topleft_png'], $product_info['topright_png'], $product_info['bottomleft_png'], $product_info['bottomright_png'], $product_info['image'],$product_id, $setting['image_width'], $setting['image_height'], $settings['labelimage_productexpros'],$settings['labelimage_featured']);
+                                }
+                                //end
+ ]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="catalog/controller/module/latest.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']);
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $setting['image_width'], $setting['image_height'], $settings['labelimage_productexpros'],$settings['labelimage_latest']);
+                                }
+                                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    
+    <file name="catalog/controller/module/bestseller.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']);
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $setting['image_width'], $setting['image_height'], $settings['labelimage_productexpros'],$settings['labelimage_bestseller']);
+                                } 
+                                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+
+    <file name="catalog/controller/module/special.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']);
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $setting['image_width'], $setting['image_height'], $settings['labelimage_productexpros'],$settings['labelimage_special']);
+                                }
+                                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="catalog/controller/module/filterpro.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']);
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $setting['image_width'], $setting['image_height'], $settings['labelimage_productexpros'],$settings['labelimage_special']);
+                                }
+                                //end
+]]>
+            </add>
+        </operation>
+
+    </file>
+    <file name="catalog/controller/product/category.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]>
+            </search>
+            <add><![CDATA[                                        //farid
+                                        if (isset($this->request->get['store_id'])) {
+                                            $store_id = $this->request->get['store_id'];
+                                        } else {
+                                            $store_id = 0;
+                                        }
+                                        $this->load->model('setting/setting');
+                                        $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                        if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                            require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                            $label = new Labelimage();
+                                            $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'), $settings['labelimage_productexpros'],$settings['labelimage_productetc']);
+                                        } 
+                                        //end
+
+]]>
+            </add>
+        </operation>
+    </file>
+    <file name="catalog/controller/product/manufacturer.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]>
+            </search>
+            <add><![CDATA[                                        //farid
+                                        if (isset($this->request->get['store_id'])) {
+                                            $store_id = $this->request->get['store_id'];
+                                        } else {
+                                            $store_id = 0;
+                                        }
+                                        $this->load->model('setting/setting');
+                                        $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                        if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                            require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                            $label = new Labelimage();
+                                            $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'), $settings['labelimage_productexpros'],$settings['labelimage_productetc']);
+                                        } 
+                                        //end
+]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="catalog/controller/product/search.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]>
+            </search>
+            <add><![CDATA[                                        //farid
+                                        if (isset($this->request->get['store_id'])) {
+                                            $store_id = $this->request->get['store_id'];
+                                        } else {
+                                            $store_id = 0;
+                                        }
+                                        $this->load->model('setting/setting');
+                                        $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                        if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                            require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                            $label = new Labelimage();
+                                            $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'), $settings['labelimage_productexpros'],$settings['labelimage_productetc']);
+                                        }
+                                        //end
+]]>
+            </add>
+        </operation>
+    </file>
+
+    <file name="catalog/controller/product/special.php">
+        <operation error="skip">
+            <search position="after"><![CDATA[$image = $this->model_tool_image->resize($result['image'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]>
+            </search>
+            <add><![CDATA[                                //farid
+                                if (isset($this->request->get['store_id'])) {
+                                    $store_id = $this->request->get['store_id'];
+                                } else {
+                                    $store_id = 0;
+                                }
+                                $this->load->model('setting/setting');
+                                $settings = $this->model_setting_setting->getSetting('labelimage', $store_id);
+                                if (isset($settings['labelimage_enable']) && $settings['labelimage_enable']=='1'){
+                                    require_once DIR_APPLICATION . '/model/tool/labelimage.php';
+                                    $label = new Labelimage();
+                                    $image = $label->setLabelImage($image, $result['topleft_png'], $result['topright_png'], $result['bottomleft_png'], $result['bottomright_png'], $result['image'],$result['product_id'], $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'), $settings['labelimage_productexpros'],$settings['labelimage_productetc']);
+                                }
+                                //end
+]]>
+            </add>
+        </operation>
+    </file>
+
+    
+</modification>
